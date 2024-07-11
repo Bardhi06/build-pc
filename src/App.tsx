@@ -1,26 +1,36 @@
 import './App.css';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 function App() {
+  
+  const [advice, setAdvice] =  useState<string>("");
+  const [count, setCount] = useState<number>(0);
+  
+  async function getAdvice() {
+    const res = await fetch('https://api.adviceslip.com/advice')
+    const data = await res.json()
+    setAdvice(data.slip.advice);
+    setCount((c) => c + 1); // Corrected this line
+  }
+
+  useEffect(function(){
+    getAdvice()
+  }, [])
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={''} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-          <h3>Build PC Title</h3>
-        </a>
-      </header>
+      <h1>{advice}</h1>
+      <button onClick={getAdvice}>Get Advice</button>
+      <Message count={count} />
     </div>
   );
 }
 
+
+function Message(props: any){
+  return( 
+    <p>
+    You have read <strong>{props.count}</strong> pieces of advice
+    </p>
+  );
+}
 export default App;
